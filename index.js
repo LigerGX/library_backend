@@ -92,16 +92,18 @@ const resolvers = {
 				query.genres = args.genre;
 			}
 
-			console.log(query);
-
 			return Book.find(query).populate('author');
 		},
 		allAuthors: async () => Author.find({}),
 		allUsers: async () => User.find({}),
-		me: (root, args, context) => context.currentUser,
+		me: (root, args, context) => {
+			console.log(context);
+			return context.currentUser;
+		},
 	},
 	Mutation: {
 		addBook: async (root, args, context) => {
+			// Only allow mutation if request has a valid token i.e. user is logged in
 			if (!context.currentUser) {
 				throw new GraphQLError('User not logged in');
 			}
@@ -137,6 +139,7 @@ const resolvers = {
 			}
 		},
 		editAuthor: async (root, args, context) => {
+			// Only allow mutation if request has a valid token i.e. user is logged in
 			if (!context.currentUser) {
 				throw new GraphQLError('User not logged in');
 			}
